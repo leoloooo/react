@@ -1,0 +1,39 @@
+// Reset.less
+
+// 1. 清除所有元素的边距和填充
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+}
+
+// 2. 设置字体相关的基本样式
+body {
+  user-select: none;
+  line-height: 1.5; // 提高可读性
+}
+
+// 3. 链接样式
+a {
+  text-decoration: none; // 移除下划线
+  color: inherit; // 使用父元素颜色
+}
+
+// 4. 列表样式
+ul,
+ol {
+  list-style: none; // 移除列表项符号
+}
+
+// 5. 图片设置为响应式
+img {
+  max-width: 100%; // 确保图片不超出其容器宽度
+  height: auto; // 保持比例不变
+  vertical-align: top;
+}
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
