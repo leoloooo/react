@@ -5,11 +5,13 @@ export const NavWrapper = styled.div`
   height: 35px;
   background-color: ${(props) => props.theme.color.primaryColor};
   line-height: 35px;
+  display: flex;
+  justify-content: center;
   .nav {
     display: flex;
-    padding-left: 300px;
     text-align: center;
     align-items: center;
+    padding-right: 240px;
     .item {
       a {
         display: inline-block;
