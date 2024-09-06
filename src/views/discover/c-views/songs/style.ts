@@ -37,18 +37,6 @@ export const HeaderWrapper = styled.div<IProps>`
       &:hover {
         background-color: white;
       }
-      &::after {
-        position: absolute;
-        bottom: -17px;
-        left: 25px;
-        content: '';
-        display: inline-block;
-        width: 24px;
-        height: 11px;
-        background-image: url(${moreIcon});
-        background-position: -48px 0;
-        z-index: 99;
-      }
     }
 
     .title {
@@ -67,6 +55,19 @@ export const HeaderWrapper = styled.div<IProps>`
       background-position: 0 0;
       background-image: url(${catelistbox});
       z-index: 9;
+      position: relative;
+      &::after {
+        position: absolute;
+        bottom: 8px;
+        left: 105px;
+        content: '';
+        display: inline-block;
+        width: 24px;
+        height: 11px;
+        background-image: url(${moreIcon});
+        background-position: -48px 0;
+        z-index: 99;
+      }
     }
     .body {
       width: 700px;
@@ -74,6 +75,7 @@ export const HeaderWrapper = styled.div<IProps>`
       background-position: -720px 0;
       background-image: url(${catelistbox});
       background-repeat: repeat-y;
+
       h3 {
         .title {
           display: inline-block;
@@ -110,19 +112,6 @@ export const HeaderWrapper = styled.div<IProps>`
             font-size: 12px;
             font-weight: bold;
           }
-          // &::before {
-          //   position: absolute;
-          //   content: '';
-          //   display: inline-block;
-          //   width: 23px;
-          //   height: 23px;
-          //   bottom: 10px;
-          //   left: 30px;
-          //   background-color: rgb(190, 190, 190);
-          //   background-image: url(${iconAll});
-          //   background-position: -20px -735px;
-          //   border-radius: 50%;
-          // }
         }
         .right {
           flex: 1;
@@ -135,6 +124,9 @@ export const HeaderWrapper = styled.div<IProps>`
           font-size: 12px;
           border-left: 1px solid rgb(230, 230, 230);
           min-height: 28px;
+          &.last-item {
+            padding-bottom: 20px;
+          }
           .item {
             display: inline-block;
             cursor: pointer;
