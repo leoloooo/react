@@ -10,6 +10,7 @@ import {
 } from '@/views/discover/c-views/recommend/service';
 //定义一下类型
 interface IRecommendState {
+  totalNums: number;
   banners: any[];
   recommendList: any[];
   newAlbum: any[];
@@ -29,12 +30,16 @@ const initialState: IRecommendState = {
   originRanking: {}, //原创榜
   settleSingers: [], //入驻歌手
   HotmusicList: [], //热门音乐
-  cacheHotmusicList: {}
+  cacheHotmusicList: {},
+  totalNums: 0
 };
 const RecommendSlice = createSlice({
   name: 'recommend',
   initialState,
   reducers: {
+    changeNums(state, action) {
+      state.totalNums = action.payload;
+    },
     changeCacheHotmusicList(state, action) {
       const { page, data } = action.payload;
       state.cacheHotmusicList[page] = data;
@@ -109,17 +114,41 @@ export const fetchRankingListAction = createAsyncThunk(
 interface FetchHotmusicListParams {
   order?: string;
   offset?: number;
+  curpage: number;
 }
+//更新缓存数据到hotlist
+export const updateHotmusicListAction = createAsyncThunk<void, FetchHotmusicListParams>(
+  'recommend',
+  async ({ curpage }, { dispatch }) => {
+    const res = JSON.parse(sessionStorage.getItem(`HotmusicList_page_${curpage}`) || '[]');
+    dispatch(changeHotmusicList(res));
+  }
+);
 export const fetchHotmusicListAction = createAsyncThunk<void, FetchHotmusicListParams>(
   'recommend',
-  async ({ order = 'hot', offset }, { dispatch }) => {
+  async ({ curpage, order = 'hot', offset }, { dispatch }) => {
     const res = await getSongList(order, offset);
+    // 将获取到的分页数据存储到 sessionStorage，键名为 "HotmusicList_page_{curpage}"
+    sessionStorage.setItem(`HotmusicList_page_${curpage}`, JSON.stringify(res.playlists));
     dispatch(changeHotmusicList(res.playlists));
+    dispatch(changeNums(res.total));
+  }
+);
+//缓存下一页数据
+export const fetchNextHotmusicListAction = createAsyncThunk<void, FetchHotmusicListParams>(
+  'recommend',
+  async ({ curpage, order = 'hot', offset }, { dispatch }) => {
+    const res = await getSongList(order, offset);
+    // 将获取到的分页数据存储到 sessionStorage，键名为 "HotmusicList_page_{curpage}"
+    sessionStorage.setItem(`HotmusicList_page_${curpage + 1}`, JSON.stringify(res.playlists));
+    dispatch(changeCacheHotmusicList({ page: curpage, data: res.playlists }));
   }
 );
 //导出后记得注册
 export default RecommendSlice.reducer;
 export const {
+  changeNums,
+  changeCacheHotmusicList,
   changeHotmusicList,
   changeSettleSinger,
   changeRankingList,
