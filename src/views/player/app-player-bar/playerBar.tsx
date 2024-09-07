@@ -4,7 +4,7 @@ import { Control, Operator, PlayerBarWrapper, PlayInfo } from '@/views/player/ap
 import { Link } from 'react-router-dom';
 import { message, Slider } from 'antd';
 import { RootState } from '@/store/rootReducer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { formatMinuteSecond, formatPicSize, formatTime } from '@/utils/formatData';
 import { getSongPlayUrl } from '@/views/discover/c-views/recommend/service';
 import {
@@ -12,20 +12,31 @@ import {
   changeMusicAction,
   changePlayMode
 } from '@/views/player/store/player';
-import { useDispatch } from 'react-redux';
+import { createSelector } from '@reduxjs/toolkit';
 
 interface IProps {
   children?: ReactNode;
 }
 
 const PlayerBar: FC<IProps> = () => {
-  //拿store里面的歌曲信息
-  const { currentSong, lyrics, lyricIndex, playmode } = useSelector((state: RootState) => ({
-    currentSong: state.player.currentSong,
-    lyrics: state.player.lyrics,
-    lyricIndex: state.player.currentLyricIndex,
-    playmode: state.player.playMode
+  //定义reselector
+  const selectCurrentSong = (state: RootState) => state.player;
+  // 记忆化处理
+  const selectPlayerData = createSelector([selectCurrentSong], (player) => ({
+    currentSong: player.currentSong,
+    lyrics: player.lyrics,
+    lyricIndex: player.currentLyricIndex,
+    playmode: player.playMode
   }));
+  const { currentSong, lyrics, lyricIndex, playmode } = useSelector(selectPlayerData);
+
+  //拿store里面的歌曲信息
+  // const { currentSong, lyrics, lyricIndex, playmode } = useSelector((state: RootState) => ({
+  //   currentSong: state.player.currentSong,
+  //   lyrics: state.player.lyrics,
+  //   lyricIndex: state.player.currentLyricIndex,
+  //   playmode: state.player.playMode
+  // }));
   //播放器
   let intervalid: any;
   const dispatch = useDispatch();
@@ -39,8 +50,7 @@ const PlayerBar: FC<IProps> = () => {
   //进度条改变
   const handleSliderChange = (value: number) => {
     //value是当前值百分比
-    const currentTime = (value / 100) * audioRef.current!.duration;
-    audioRef.current!.currentTime = currentTime;
+    audioRef.current!.currentTime = (value / 100) * audioRef.current!.duration;
     setProgress(value);
   };
   //挂载歌曲
@@ -51,12 +61,11 @@ const PlayerBar: FC<IProps> = () => {
         const res = await getSongPlayUrl(currentSong.id);
         const songUrl = res.data[0].url;
         setDuration(formatMinuteSecond(res.data[0].time));
-        console.log('歌曲地址', res.data[0]);
         //设置音源
         audioRef.current!.src = songUrl;
         console.log('音频准备完毕');
       } catch (err) {
-        console.log('音频准备是吧', err);
+        console.log('音频准备是吧');
       }
     };
 
@@ -66,7 +75,6 @@ const PlayerBar: FC<IProps> = () => {
   //切换歌曲
   const changeMusic = (isNext = true) => {
     dispatch(changeMusicAction(isNext) as any);
-    console.log('切换歌曲');
   };
 
   //播放音乐

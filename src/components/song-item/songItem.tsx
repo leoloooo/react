@@ -21,7 +21,7 @@ const SongItem: FC<IProps> = (props) => {
           </div>
         </div>
       </div>
-      <div className="bottom">{itemData.name}</div>
+      {itemData.isShow ? <div className="bottom">{itemData.name}</div> : null}
     </SongItemWrapper>
   );
 };

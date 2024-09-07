@@ -2,9 +2,50 @@ import styled from 'styled-components';
 import moreIcon from '@/assess/imgs/moreIcon.png';
 import catelistbox from '@/assess/imgs/chooseBox.png';
 import iconAll from '@/assess/imgs/iconall_sprite.png';
+import IconImg from '@/assess/imgs/musicIcon.png';
 export const SongsWrapper = styled.div`
   background-color: rgb(245, 245, 245);
   padding: 25px;
+  .musicList {
+    position: relative;
+    right: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    .item {
+      width: 140px;
+      height: 188px;
+      padding: 0 0 30px 50px;
+      .desc {
+        .top {
+          font-size: 14px;
+          // 一行显示不下的部分用...代替
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        .bottom {
+          display: inline-block;
+          position: relative;
+          font-size: 12px;
+          color: rgb(102, 102, 102);
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        .img {
+          height: 13px;
+          width: 13px;
+          display: inline-block;
+          position: relative;
+          bottom: -7px;
+          right: -5px;
+        }
+      }
+    }
+  }
 `;
 interface IProps {
   position?: string;
@@ -12,6 +53,8 @@ interface IProps {
 export const HeaderWrapper = styled.div<IProps>`
   position: relative;
   display: flex;
+  width: 900px;
+  margin: 0 auto;
   height: 33px;
   border-bottom: 2px solid #c10d0c;
   justify-content: space-between;
@@ -176,6 +219,23 @@ export const HeaderWrapper = styled.div<IProps>`
       &:hover {
         text-decoration: underline;
       }
+    }
+  }
+`;
+export const FooterWrapper = styled.div`
+  position: relative;
+  width: 900px;
+  margin: 40px auto;
+  height: 26px;
+  .pagination {
+    display: flex;
+    justify-content: center;
+  }
+  .btn-pagenation {
+    //选中
+    &.active {
+      color: #fff;
+      background-color: #c20c0c;
     }
   }
 `;

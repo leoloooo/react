@@ -5,6 +5,7 @@ import {
   getNewAlbums,
   getRankingList,
   getSettleSingers,
+  getSongList,
   getTopBanners
 } from '@/views/discover/c-views/recommend/service';
 //定义一下类型
@@ -16,6 +17,8 @@ interface IRecommendState {
   newRanking: any;
   originRanking: any;
   settleSingers: any[];
+  HotmusicList: any[];
+  cacheHotmusicList: { [key: number]: any };
 }
 const initialState: IRecommendState = {
   banners: [], //轮播图
@@ -24,12 +27,18 @@ const initialState: IRecommendState = {
   upRanking: {}, //飙升榜
   newRanking: {}, //新歌榜
   originRanking: {}, //原创榜
-  settleSingers: [] //入驻歌手
+  settleSingers: [], //入驻歌手
+  HotmusicList: [], //热门音乐
+  cacheHotmusicList: {}
 };
 const RecommendSlice = createSlice({
   name: 'recommend',
   initialState,
   reducers: {
+    changeCacheHotmusicList(state, action) {
+      const { page, data } = action.payload;
+      state.cacheHotmusicList[page] = data;
+    },
     changeBanners(state, action) {
       state.banners = action.payload;
     },
@@ -57,6 +66,10 @@ const RecommendSlice = createSlice({
         default:
           break;
       }
+    },
+    changeHotmusicList(state, action) {
+      state.HotmusicList = action.payload;
+      console.log('state.HotmusicList', state.HotmusicList);
     }
   }
 });
@@ -92,9 +105,22 @@ export const fetchRankingListAction = createAsyncThunk(
     }
   }
 );
+// 定义接口来表示参数类型
+interface FetchHotmusicListParams {
+  order?: string;
+  offset?: number;
+}
+export const fetchHotmusicListAction = createAsyncThunk<void, FetchHotmusicListParams>(
+  'recommend',
+  async ({ order = 'hot', offset }, { dispatch }) => {
+    const res = await getSongList(order, offset);
+    dispatch(changeHotmusicList(res.playlists));
+  }
+);
 //导出后记得注册
 export default RecommendSlice.reducer;
 export const {
+  changeHotmusicList,
   changeSettleSinger,
   changeRankingList,
   changeNewAlbum,

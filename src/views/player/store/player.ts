@@ -1,4 +1,4 @@
-import { AsyncThunkAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getLyric, getSongDetail } from '@/views/player/services/player';
 import { parseLyrics } from '@/utils/formatLyric';
 //还要定义一个接口，用于描述当前播放歌曲的信息
@@ -33,7 +33,6 @@ export const getSongDetailAction = createAsyncThunk(
     const lyric = await getLyric(ids);
     const song = res.songs[0];
     const Curlyric = parseLyrics(lyric.lrc.lyric);
-    console.log('歌词Curlyric', Curlyric);
     //放到currentsong里面
     dispatch(changeCurrentSong(song));
     //放到currentLyricList里面
@@ -41,21 +40,10 @@ export const getSongDetailAction = createAsyncThunk(
   }
 );
 //获取歌曲
-interface IthunkState {
-  any: any;
-}
-export const fetchSong = createAsyncThunk(
-  'currentSong',
-  async (ids: number, { dispatch, getState }) => {
-    const res = await getSongDetail(ids);
-  }
-);
+
 export const changeMusicAction = createAsyncThunk<any, boolean, any>(
   'changeMusic',
-  (isNext: boolean, { dispatch, getState }) => {
-    //获取歌曲索引
-    console.log('isNext', isNext);
-  }
+  (isNext: boolean, { dispatch, getState }) => {}
 );
 
 // 创建 playerSlice 用于管理播放器相关的状态
@@ -67,7 +55,6 @@ const playerSlice = createSlice({
     changePlayMode(state, action) {
       //第一次传1进来,playmode就是1
       state.playMode = (state.playMode + action.payload) % 3;
-      console.log('playMode', state.playMode);
     },
     changeCurrentSong(state, action) {
       state.currentSong = action.payload;
