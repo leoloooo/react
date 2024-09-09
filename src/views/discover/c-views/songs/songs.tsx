@@ -21,6 +21,8 @@ interface IProps {
 }
 
 const Song: FC<IProps> = () => {
+  //changeCat
+  const [catName, setCatName] = useState('全部');
   // 获取 cateListBoxRef 的 ref 拿到元素的 DOM
   const usecateListBoxRef = useRef<HTMLDivElement>(null);
   // 获取 spanChoose 的 ref
@@ -38,11 +40,13 @@ const Song: FC<IProps> = () => {
   const [curPage, setCurPage] = useState(1);
   const dispatch = useDispatch<AppDispatch>();
   // 获取 Redux 中的 HotmusicList
-  const { HotmusicList, totalNums } = useSelector((state: RootState) => ({
+  const { HotmusicList, totalNums, cat } = useSelector((state: RootState) => ({
     HotmusicList: state.recommend.HotmusicList,
-    totalNums: state.recommend.totalNums
+    totalNums: state.recommend.totalNums,
+    cat: state.recommend.cat
   }));
-  const totalPage = totalNums / 35;
+  //取整
+  const totalPage = Math.ceil(totalNums / 35);
   //挂载的时候监控用户滚动情况,快到底底部的时候缓存下一页数据避免等待
   useEffect(() => {
     const handleScroll = async () => {
@@ -54,7 +58,11 @@ const Song: FC<IProps> = () => {
         try {
           // 缓存下一页数据
           await dispatch(
-            fetchNextHotmusicListAction({ curpage: curPage + 1, offset: curPage * 35 })
+            fetchNextHotmusicListAction({
+              cat: catName,
+              curpage: curPage + 1,
+              offset: curPage * 35
+            })
           );
           console.log('缓存下一页数据是否重复缓存');
           // 成功后设置缓存标志
@@ -79,7 +87,7 @@ const Song: FC<IProps> = () => {
   }, []); // 空数组表示仅在组件挂载时执行
   // 在组件挂载时获取热门音乐列表
   useEffect(() => {
-    dispatch(fetchHotmusicListAction({ curpage: 1, offset: 0 }));
+    dispatch(fetchHotmusicListAction({ cat: catName, curpage: 1, offset: 0 }));
   }, [dispatch]);
 
   // 添加一个监听器来检测点击事件是否发生在特定 DOM 之外
@@ -165,20 +173,31 @@ const Song: FC<IProps> = () => {
     //看看sessionstorage有没有数据
     const cacheData = sessionStorage.getItem(`hotmusicList${page}`);
     if (cacheData) {
-      dispatch(updateHotmusicListAction({ curpage: page }));
+      dispatch(updateHotmusicListAction({ cat: catName, curpage: page }));
     } else {
-      dispatch(fetchHotmusicListAction({ curpage: page, offset: (page - 1) * 35 }));
+      dispatch(fetchHotmusicListAction({ cat: catName, curpage: page, offset: (page - 1) * 35 }));
     }
 
     // 回到顶部
     window.scrollTo(0, 0);
+  };
+  //点击切换歌单
+  const handleItemClick = (name: string) => {
+    dispatch(fetchHotmusicListAction({ curpage: 1, offset: 0, cat: name }));
+    if (onchange) {
+      onchange(1);
+    }
+    // 重置当前页状态为 1
+    setCurPage(1);
+    setCatName(name);
+    setVisible(false);
   };
 
   return (
     <SongsWrapper className="wrapv2">
       <HeaderWrapper>
         <div className="left">
-          <h3 className="title">全部</h3>
+          <h3 className="title">{cat}</h3>
           <span className="choose" onClick={showClick} ref={refSpanChoose}>
             选择分类
             <DownOutlined
@@ -207,7 +226,7 @@ const Song: FC<IProps> = () => {
                   </LeftStyledDiv>
                   <div className={`right ${index === cattleBox.length - 1 ? 'last-item' : ''}`}>
                     {item.data.map((sub) => (
-                      <div className="item" key={sub.cat}>
+                      <div className="item" key={sub.cat} onClick={() => handleItemClick(sub.cat)}>
                         {sub.cat}
                       </div>
                     ))}
@@ -248,7 +267,14 @@ const Song: FC<IProps> = () => {
       </div>
       <FooterWrapper>
         <div className="pagination">
-          <Pagination total={totalPage} itemRender={itemRender} onChange={onchange} pageSize={35} />
+          <Pagination
+            showSizeChanger={false}
+            total={totalNums}
+            itemRender={itemRender}
+            onChange={onchange}
+            pageSize={35}
+            current={curPage}
+          />
         </div>
       </FooterWrapper>
     </SongsWrapper>

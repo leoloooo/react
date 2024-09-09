@@ -25,3 +25,10 @@ export function formatTime(time: number): string {
   // 格式化为两位数字，确保前面有零
   return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 }
+
+export function formatMonth(timestamp: number): string {
+  const date = new Date(timestamp);
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${month}月${day}日`;
+}

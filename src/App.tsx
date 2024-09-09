@@ -13,7 +13,7 @@ function App() {
         <div className="main">{useRoutes(routes)}</div>
       </Suspense>
       <AppFooter />
-      <PlayerBar />
+      {/*<PlayerBar />*/}
     </div>
   );
 }

@@ -20,6 +20,8 @@ interface IRecommendState {
   settleSingers: any[];
   HotmusicList: any[];
   cacheHotmusicList: { [key: number]: any };
+  cat: string;
+  rankNamePic: any[];
 }
 const initialState: IRecommendState = {
   banners: [], //轮播图
@@ -31,12 +33,17 @@ const initialState: IRecommendState = {
   settleSingers: [], //入驻歌手
   HotmusicList: [], //热门音乐
   cacheHotmusicList: {},
-  totalNums: 0
+  totalNums: 0,
+  cat: '全部',
+  rankNamePic: []
 };
 const RecommendSlice = createSlice({
   name: 'recommend',
   initialState,
   reducers: {
+    changeCat(state, action) {
+      state.cat = action.payload;
+    },
     changeNums(state, action) {
       state.totalNums = action.payload;
     },
@@ -74,7 +81,10 @@ const RecommendSlice = createSlice({
     },
     changeHotmusicList(state, action) {
       state.HotmusicList = action.payload;
-      console.log('state.HotmusicList', state.HotmusicList);
+    },
+    changeRankNamePic(state, action) {
+      state.rankNamePic = action.payload;
+      console.log(state.rankNamePic);
     }
   }
 });
@@ -110,9 +120,22 @@ export const fetchRankingListAction = createAsyncThunk(
     }
   }
 );
+const AllRankingIdx = [3778678, 19723756, 3779629, 2884035];
+export const fetchAllRankingListAction = createAsyncThunk(
+  'ranking',
+  async (idx: number, { dispatch }) => {
+    for (let i = 0; i <= RankingIdx.length; i++) {
+      const res = await getRankingList(AllRankingIdx[i]);
+      console.log(res.playlist.name);
+      console.log(res.playlist.coverImgUrl);
+      // dispatch(changeRankingList(res.playlist));
+    }
+  }
+);
+//topList4个列表
 // 定义接口来表示参数类型
 interface FetchHotmusicListParams {
-  order?: string;
+  cat: string;
   offset?: number;
   curpage: number;
 }
@@ -126,19 +149,20 @@ export const updateHotmusicListAction = createAsyncThunk<void, FetchHotmusicList
 );
 export const fetchHotmusicListAction = createAsyncThunk<void, FetchHotmusicListParams>(
   'recommend',
-  async ({ curpage, order = 'hot', offset }, { dispatch }) => {
-    const res = await getSongList(order, offset);
+  async ({ curpage, cat = '全部', offset }, { dispatch }) => {
+    const res = await getSongList(cat, offset);
     // 将获取到的分页数据存储到 sessionStorage，键名为 "HotmusicList_page_{curpage}"
     sessionStorage.setItem(`HotmusicList_page_${curpage}`, JSON.stringify(res.playlists));
     dispatch(changeHotmusicList(res.playlists));
     dispatch(changeNums(res.total));
+    dispatch(changeCat(res.cat));
   }
 );
 //缓存下一页数据
 export const fetchNextHotmusicListAction = createAsyncThunk<void, FetchHotmusicListParams>(
   'recommend',
-  async ({ curpage, order = 'hot', offset }, { dispatch }) => {
-    const res = await getSongList(order, offset);
+  async ({ curpage, cat = 'hot', offset }, { dispatch }) => {
+    const res = await getSongList(cat, offset);
     // 将获取到的分页数据存储到 sessionStorage，键名为 "HotmusicList_page_{curpage}"
     sessionStorage.setItem(`HotmusicList_page_${curpage + 1}`, JSON.stringify(res.playlists));
     dispatch(changeCacheHotmusicList({ page: curpage, data: res.playlists }));
@@ -147,6 +171,7 @@ export const fetchNextHotmusicListAction = createAsyncThunk<void, FetchHotmusicL
 //导出后记得注册
 export default RecommendSlice.reducer;
 export const {
+  changeCat,
   changeNums,
   changeCacheHotmusicList,
   changeHotmusicList,

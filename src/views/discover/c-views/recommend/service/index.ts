@@ -62,12 +62,12 @@ export function getSongPlayUrl(id: string) {
 }
 
 //获取歌单
-export function getSongList(order: string = 'hot', offset: number = 0) {
+export function getSongList(cat: string = '全部', offset: number = 0) {
   return hyRequest.get({
     url: '/top/playlist',
     params: {
       limit: 35, // 每页固定显示35条数据
-      order, // 排序方式，如 'hot' 或 'new'
+      cat, // 排序方式，如 'hot' 或 'new'
       offset // 当前数据的偏移量
     }
   });

@@ -7,6 +7,7 @@ export const SongsWrapper = styled.div`
   background-color: rgb(245, 245, 245);
   padding: 25px;
   .musicList {
+    z-index: 1;
     position: relative;
     right: 10px;
     display: flex;
@@ -51,6 +52,7 @@ interface IProps {
   position?: string;
 }
 export const HeaderWrapper = styled.div<IProps>`
+  z-index: 99;
   position: relative;
   display: flex;
   width: 900px;

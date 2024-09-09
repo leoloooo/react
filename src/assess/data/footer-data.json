@@ -1,0 +1,44 @@
+[
+  {
+  "name": "音乐开发平台",
+  "positionNormal":"-155px -3px",
+  "positionHover":"-3px -104px",
+  "link": "https://music.163.com/nos/m/musician"
+  },
+  {
+  "name": "云村交易所",
+  "positionNormal":"-3px -153px",
+  "positionHover":"-54px -153px",
+  "link": "https://music.163.com/nos/m/activity/center"
+  },
+  {
+  "name": "X StudionAI歌手",
+  "positionNormal":"-104px -104px",
+  "positionHover":"-104px -104px",
+  "link": "https://music.163.com/nos/m/activity/center"
+  },
+  {
+  "name": "用户认证",
+  "positionNormal":"-54px -55px",
+  "positionHover":"-54px -55px",
+  "link": "https://music.163.com/nos/m/activity/center"
+  },
+  {
+  "name": "AI免费与歌",
+  "positionNormal":"-154px -53px",
+  "positionHover":"-154px -53px",
+  "link": "https://music.163.com/nos/m/activity/center"
+  },
+  {
+  "name": "云推歌",
+  "positionNormal":"-3px -53px",
+  "positionHover":"-3px -53px",
+  "link": "https://music.163.com/nos/m/activity/center"
+  },
+  {
+  "name": "赞赏",
+  "positionNormal":"-155px -105px",
+  "positionHover":"-53px -105px",
+  "link": "https://music.163.com/nos/m/activity/center"
+}
+]
