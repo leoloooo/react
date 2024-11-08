@@ -72,3 +72,16 @@ export function getSongList(cat: string = '全部', offset: number = 0) {
     }
   });
 }
+export function getSongList2(cat: string = '全部', offset: number = 0) {
+  return hyRequest.get({
+    url: '/top/playlist',
+    params: {
+      limit: 35, // 每页固定显示35条数据
+      cat, // 排序方式，如 'hot' 或 'new'
+      offset // 当前数据的偏移量
+    }
+  });
+}
+export function deleteData(cat: string = '全部', offset: number = 0) {
+  return 1;
+}

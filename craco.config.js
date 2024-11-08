@@ -1,5 +1,6 @@
 const path = require('path');
 const resolve = (dir) => path.resolve(__dirname, dir);
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 module.exports = {
   //插件
   plugins: [{ plugin: require('craco-less') }],
@@ -12,6 +13,7 @@ module.exports = {
       common: path.resolve(__dirname, 'src/common'),
       services: path.resolve(__dirname, 'src/services'),
       store: path.resolve(__dirname, 'src/store')
-    }
+    },
+    plugins: [...(process.env.ANALYZE === 'true' ? [new BundleAnalyzerPlugin()] : [])]
   }
 };

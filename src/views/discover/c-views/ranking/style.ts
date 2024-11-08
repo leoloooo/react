@@ -249,8 +249,13 @@ export const RankingWrapper = styled.div`
             display: flex;
             align-items: center;
             > span {
+              cursor: pointer;
               font-size: 12px;
               color: #666;
+              //添加hover
+              &:hover {
+                text-decoration: underline;
+              }
             }
           }
           .musicName1 {
@@ -263,6 +268,10 @@ export const RankingWrapper = styled.div`
               margin-left: 22px;
               font-size: 12px;
               color: #666;
+              //添加hover
+              &:hover {
+                text-decoration: underline;
+              }
             }
             &::before {
               content: '';
@@ -307,7 +316,7 @@ export const RankingWrapper = styled.div`
           }
           .musicTime {
             .playbtn {
-              display: flex;
+              display: none;
               position: relative;
               cursor: pointer;
               align-items: center;
@@ -367,6 +376,12 @@ export const RankingWrapper = styled.div`
             font-size: 12px;
             position: relative;
             top: -2px;
+            cursor: pointer;
+            //不换行,超出部分隐藏
+            //添加hover
+            &:hover {
+              text-decoration: underline;
+            }
           }
           table {
             width: 100%;
@@ -423,6 +438,14 @@ export const RankingWrapper = styled.div`
 
           tbody tr:last-child td {
             border-bottom: none; /* 最后一行没有底部边框，因为整体表格已经有底部边框 */
+          }
+          //悬停隐藏time
+          .musicItem:hover .time {
+            display: none;
+          }
+          //悬停是btn显示
+          .musicItem:hover .playbtn {
+            display: flex;
           }
         }
       }

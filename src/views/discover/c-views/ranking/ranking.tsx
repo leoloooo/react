@@ -5,13 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '@/store';
 
 import { RootState } from '@/store/rootReducer';
-import { formatMonth, formatPicSize } from '@/utils/formatData';
+import { formatMinuteSecond, formatMonth, formatPicSize } from '@/utils/formatData';
 import {
+  fetchAllMusicListAction,
   fetchAllRankingListAction,
   fetchMusicListDetailAction
 } from '@/views/discover/c-views/ranking/store';
-import AreaHeadder from '@/components/area-header-v1';
-import { Table, TableProps } from 'antd';
 
 interface IProps {
   children?: ReactNode;
@@ -20,10 +19,12 @@ interface IProps {
 const Ranking: FC<IProps> = () => {
   const dispatch = useDispatch<AppDispatch>();
   //拿数据
-  const { rankDetails, musicDetails } = useSelector((state: RootState) => ({
+  const { rankDetails, musicDetails, allMusicList } = useSelector((state: RootState) => ({
     rankDetails: state.ranking.rankDetails,
-    musicDetails: state.ranking.musicDetails
+    musicDetails: state.ranking.musicDetails,
+    allMusicList: state.ranking.AllMusicList
   }));
+
   useEffect(() => {
     const fetchData = async () => {
       await dispatch(fetchAllRankingListAction());
@@ -34,6 +35,12 @@ const Ranking: FC<IProps> = () => {
   useEffect(() => {
     if (rankDetails.length > 0 && rankDetails) {
       dispatch(fetchMusicListDetailAction(rankDetails[0].id));
+    }
+  }, [dispatch, rankDetails]);
+  //挂载的时候获取数据,某个默认第一个歌单详细
+  useEffect(() => {
+    if (rankDetails.length > 0 && rankDetails) {
+      dispatch(fetchAllMusicListAction(rankDetails[0].id));
     }
   }, [dispatch, rankDetails]);
   //解决刷新的时候第一条数据还是没拿到
@@ -63,7 +70,9 @@ const Ranking: FC<IProps> = () => {
   const handleItem = (item: any) => {
     setMusicData(item);
     dispatch(fetchMusicListDetailAction(item.id));
+    dispatch(fetchAllMusicListAction(item.id));
   };
+
   return (
     <RankingWrapper>
       <div className="content wrapv2">
@@ -148,57 +157,70 @@ const Ranking: FC<IProps> = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="songRank">
-                      <div>
-                        <span>1</span>
-                        <span>0</span>
-                      </div>
-                    </td>
-                    <td className="musicName">
-                      <div
-                        className="img"
-                        style={{ backgroundImage: `url(${musicData.coverImgUrl})` }}
-                      ></div>
-                      <span>罗生门(flower)</span>
-                    </td>
-                    <td className="musicTime">
-                      <div className="time" style={{ display: 'none' }}>
-                        04:05
-                      </div>
-                      <div className="playbtn">
-                        <span className="add"></span>
-                        <span className="favor"></span>
-                        <span className="share"></span>
-                        <span className="download"></span>
-                      </div>
-                    </td>
-                    <td className="singerName">cardiB</td>
-                  </tr>
-                  {/*后面的展示跟前三个不一样*/}
-                  <tr>
-                    <td className="songRank">
-                      <div>
-                        <span>1</span>
-                        <span>0</span>
-                      </div>
-                    </td>
-                    <td className="musicName1">
-                      <span>青花</span>
-                    </td>
-                    <td className="musicTime">
-                      <div className="time" style={{ display: 'none' }}>
-                        04:05
-                      </div>
-                      <div className="playbtn">
-                        <span className="add"></span>
-                        <span className="favor"></span>
-                        <span className="share"></span>
-                        <span className="download"></span>
-                      </div>
-                    </td>
-                    <td className="singerName">cardiB</td>
-                  </tr>
+                  {allMusicList.map((item, index) => {
+                    if (index < 3) {
+                      //console.log(item.ar[0].name);
+                      return (
+                        <tr key={index} className="musicItem">
+                          {/* 这里是前3个item的特殊渲染 */}
+                          <td className="songRank">
+                            <div>
+                              <span>{index + 1}</span>
+                              <span>0</span>
+                            </div>
+                          </td>
+                          <td className="musicName">
+                            <div className="img">
+                              <img src={item.al.picUrl} alt="#" />
+                            </div>
+                            <span>{item.name}</span>
+                          </td>
+                          <td className="musicTime">
+                            <div className="time">{formatMinuteSecond(item.dt)}</div>
+                            <div className="playbtn">
+                              <span className="add"></span>
+                              <span className="favor"></span>
+                              <span className="share"></span>
+                              <span className="download"></span>
+                            </div>
+                          </td>
+                          <td className="singerName">
+                            {item.ar.map((iten: { name: string }) => iten.name).join(' / ')}
+                          </td>
+                        </tr>
+                      );
+                    } else {
+                      return (
+                        <tr key={index} className="musicItem">
+                          {/* 这里是其他item的渲染 */}
+                          <td className="songRank">
+                            <div>
+                              <span>{index + 1}</span>
+                              <span>0</span>
+                            </div>
+                          </td>
+                          <td className="musicName1">
+                            <span>{item.name}</span>
+                          </td>
+                          <td className="musicTime">
+                            <div className="time">{formatMinuteSecond(item.dt)}</div>
+                            <div className="playbtn">
+                              <span className="add"></span>
+                              <span className="favor"></span>
+                              <span className="share"></span>
+                              <span className="download"></span>
+                            </div>
+                          </td>
+                          <td className="singerName">
+                            {item.ar
+                              .slice(0, 2)
+                              .map((iten: { name: string }) => iten.name)
+                              .join(' / ')}
+                          </td>
+                        </tr>
+                      );
+                    }
+                  })}
                 </tbody>
               </table>
             </div>

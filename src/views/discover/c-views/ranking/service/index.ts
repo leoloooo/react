@@ -15,3 +15,12 @@ export function getMusicListDetail(id: number) {
     }
   });
 }
+//歌单所有歌曲
+export function getAllMusicList(id: number) {
+  return hyRequest.get({
+    url: '/playlist/track/all',
+    params: {
+      id
+    }
+  });
+}
